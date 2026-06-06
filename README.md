@@ -2,7 +2,7 @@
 
 HexaGallery is a stunning, interlocking hexagon image gallery widget for Elementor. It creates a modern, honeycomb-style grid that is fully responsive and packed with elegant hover effects, making it perfect for portfolios, team showcases, or creative image displays.
 
-![HexaGallery Preview](images/h.jpeg)
+
 
 ## 🚀 Features
 
