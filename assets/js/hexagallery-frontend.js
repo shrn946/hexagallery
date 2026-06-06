@@ -4,9 +4,13 @@
   class HexaGallery {
     constructor($element) {
       this.$element = $element;
+      this.$wrapper = $element.find(".gallery-wrapper");
       this.$grid = $element.find(".hex-grid");
-      this.showTitle = $element.data("show-lb-title") === "yes";
-      this.showDesc = $element.data("show-lb-desc") === "yes";
+      
+      // Correctly read data attributes from the wrapper
+      this.showTitle = this.$wrapper.attr("data-show-lb-title") === "yes";
+      this.showDesc = this.$wrapper.attr("data-show-lb-desc") === "yes";
+      
       this.items = [];
       this.currentIndex = 0;
       this.overlay = null;

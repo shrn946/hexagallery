@@ -2,7 +2,7 @@
 /**
  * Plugin Name: HexaGallery
  * Description: A stunning interlocking hexagon image gallery widget for Elementor.
- * Version: 1.0.0
+ * Version: 1.0.2
  * Author: Hassan
  * Text Domain: hexagallery
  *
