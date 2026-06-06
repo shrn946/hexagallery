@@ -1,0 +1,333 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Playfair+Display:wght@600&display=swap");
+
+/* =========================================
+   1. Core Variables & Math (Base Defaults)
+   ========================================= */
+:root {
+  --hex-width: 220px;
+  --hex-gap: 16px;
+  --sqrt3: 1.73205;
+  --hex-height: calc(var(--hex-width) * 2 / var(--sqrt3));
+  --hex-margin-x: calc(var(--hex-gap) / 2);
+  --hex-margin-y: calc(
+    (var(--sqrt3) / 4 * var(--hex-gap)) - (0.125 * var(--hex-height))
+  );
+  --hex-brightness: 0.7;
+  --hover-scale: 1.15;
+  --grid-cols: 4;
+}
+
+.gallery-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  perspective: 1000px;
+  overflow: hidden;
+  padding: 40px 0;
+}
+
+.hex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: calc((var(--hex-width) + var(--hex-gap)) * var(--grid-cols));
+  padding: calc(var(--hex-margin-y) * -1) 0;
+  justify-content: flex-start; /* Fix: Align to start for honeycomb logic */
+  margin: 0 auto;
+}
+
+/* =========================================
+   2. Hexagon Shape, Structure & Depth
+   ========================================= */
+.hex {
+  width: var(--hex-width);
+  height: var(--hex-height);
+  margin: var(--hex-margin-y) var(--hex-margin-x);
+  position: relative;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  transform: translateY(0);
+  transition: filter 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  outline: none;
+}
+
+/* Interlocking Logic based on columns */
+/* For 4 columns default: element 5 is the start of row 2 */
+.hex:nth-child(7n + 5) {
+  margin-left: calc((var(--hex-width) + var(--hex-gap)) / 2 + var(--hex-margin-x));
+}
+
+.hex-shape {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background-color: #1e2025;
+}
+
+.hex-shape::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.6) 120%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.5s ease;
+}
+
+.hex:hover,
+.hex:focus-within {
+  z-index: 10;
+  transform: translateY(-6px);
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6));
+}
+
+.hex:hover .hex-shape::after,
+.hex:focus-within .hex-shape::after {
+  opacity: 0;
+}
+
+.hex img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform: scale(1.02);
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.6s ease;
+}
+
+/* Force grayscale off if parent has no-grayscale class */
+.hex-grid.no-grayscale .hex img {
+  filter: none !important;
+}
+
+.hex:hover img,
+.hex:focus-visible img {
+  transform: scale(var(--hover-scale));
+  filter: grayscale(0%) brightness(1.05) contrast(1.05) !important;
+}
+
+/* =========================================
+   3. Caption Overlay
+   ========================================= */
+.hex-caption {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 20px 70px 20px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.hex-caption h3 {
+  font-family: "Playfair Display", serif;
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  transform: translateY(15px);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hex-caption p {
+  font-family: "Montserrat", sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  transform: translateY(15px);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hex:hover .hex-caption,
+.hex:focus-visible .hex-caption {
+  opacity: 1;
+}
+
+.hex:hover .hex-caption h3,
+.hex:focus-visible .hex-caption h3 {
+  transform: translateY(0);
+}
+
+.hex:hover .hex-caption p,
+.hex:focus-visible .hex-caption p {
+  transform: translateY(0);
+  transition-delay: 0.05s;
+}
+
+/* =========================================
+   4. Custom Lightbox Styling
+   ========================================= */
+.hex-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  backdrop-filter: blur(5px);
+}
+
+.hex-lightbox-overlay.active {
+  opacity: 1;
+}
+
+.hex-lightbox-container {
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hex-lightbox-image-wrapper {
+  position: relative;
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hex-lightbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  transform: scale(0.9);
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hex-lightbox-overlay.active .hex-lightbox-image {
+  transform: scale(1);
+}
+
+.hex-lightbox-info {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  color: #fff;
+}
+
+.hex-lightbox-title {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.hex-lightbox-desc {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  color: #ccc;
+  margin: 0;
+}
+
+.hex-lightbox-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 10px;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.hex-lightbox-close:hover {
+  transform: scale(1.2);
+}
+
+.hex-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  font-size: 40px;
+  padding: 20px 15px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  z-index: 10;
+}
+
+.hex-lightbox-nav:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.hex-lightbox-prev {
+  left: -60px;
+}
+
+.hex-lightbox-next {
+  right: -60px;
+}
+
+/* =========================================
+   5. Responsive Overrides
+   ========================================= */
+@media (max-width: 1200px) {
+  .hex-lightbox-prev { left: 0; }
+  .hex-lightbox-next { right: 0; }
+}
+
+@media (max-width: 1024px) {
+  :root { --grid-cols: 3; }
+  .hex:nth-child(7n + 5) { margin-left: var(--hex-margin-x); }
+  .hex:nth-child(5n + 4) { margin-left: calc((var(--hex-width) + var(--hex-gap)) / 2 + var(--hex-margin-x)); }
+}
+
+@media (max-width: 768px) {
+  :root { --grid-cols: 2; }
+  .hex:nth-child(5n + 4) { margin-left: var(--hex-margin-x); }
+  .hex:nth-child(3n + 3) { margin-left: calc((var(--hex-width) + var(--hex-gap)) / 2 + var(--hex-margin-x)); }
+  .hex-lightbox-title { font-size: 1.5rem; }
+}
+
+@media (max-width: 550px) {
+  :root { --grid-cols: 1.5; }
+  .hex:nth-child(3n + 3) { margin-left: var(--hex-margin-x); }
+  .hex:nth-child(even) { margin-left: calc((var(--hex-width) + var(--hex-gap)) / 2 + var(--hex-margin-x)); }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --hex-width: 160px;
+    --hex-gap: 10px;
+  }
+}
