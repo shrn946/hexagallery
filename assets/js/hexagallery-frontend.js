@@ -5,6 +5,8 @@
     constructor($element) {
       this.$element = $element;
       this.$grid = $element.find(".hex-grid");
+      this.showTitle = $element.data("show-lb-title") === "yes";
+      this.showDesc = $element.data("show-lb-desc") === "yes";
       this.items = [];
       this.currentIndex = 0;
       this.overlay = null;
@@ -101,11 +103,31 @@
       const img = this.overlay.querySelector(".hex-lightbox-image");
       const title = this.overlay.querySelector(".hex-lightbox-title");
       const desc = this.overlay.querySelector(".hex-lightbox-desc");
+      const info = this.overlay.querySelector(".hex-lightbox-info");
 
       // Set content
       img.src = item.src;
-      title.textContent = item.title;
-      desc.textContent = item.desc;
+      
+      if (this.showTitle && item.title) {
+        title.textContent = item.title;
+        title.style.display = "block";
+      } else {
+        title.style.display = "none";
+      }
+
+      if (this.showDesc && item.desc) {
+        desc.textContent = item.desc;
+        desc.style.display = "block";
+      } else {
+        desc.style.display = "none";
+      }
+
+      // Hide info container if both are disabled
+      if (!this.showTitle && !this.showDesc) {
+        info.style.display = "none";
+      } else {
+        info.style.display = "block";
+      }
 
       // Hide/Show nav buttons based on length
       const prevBtn = this.overlay.querySelector(".hex-lightbox-prev");

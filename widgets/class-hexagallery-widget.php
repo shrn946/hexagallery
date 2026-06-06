@@ -372,6 +372,36 @@ class HexaGallery_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'show_lightbox_title',
+			[
+				'label'        => esc_html__( 'Show Lightbox Title', 'hexagallery' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'hexagallery' ),
+				'label_off'    => esc_html__( 'No', 'hexagallery' ),
+				'return_value' => 'yes',
+				'default'      => 'no',
+				'condition'    => [
+					'enable_lightbox' => 'yes',
+				],
+			]
+		);
+
+		$this->add_control(
+			'show_lightbox_desc',
+			[
+				'label'        => esc_html__( 'Show Lightbox Description', 'hexagallery' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'hexagallery' ),
+				'label_off'    => esc_html__( 'No', 'hexagallery' ),
+				'return_value' => 'yes',
+				'default'      => 'no',
+				'condition'    => [
+					'enable_lightbox' => 'yes',
+				],
+			]
+		);
+
+		$this->add_control(
 			'animation_speed',
 			[
 				'label'      => esc_html__( 'Animation Speed (ms)', 'hexagallery' ),
@@ -401,12 +431,17 @@ class HexaGallery_Widget extends Widget_Base {
 		$enable_caption = $settings['enable_hover_caption'] === 'yes';
 		$enable_grayscale = $settings['enable_grayscale'] === 'yes';
 
+		$show_lb_title = $settings['show_lightbox_title'] === 'yes';
+		$show_lb_desc = $settings['show_lightbox_desc'] === 'yes';
+
 		$grid_class = 'hex-grid';
 		if ( ! $enable_grayscale ) {
 			$grid_class .= ' no-grayscale';
 		}
 		?>
-		<div class="gallery-wrapper">
+		<div class="gallery-wrapper" 
+			 data-show-lb-title="<?php echo $show_lb_title ? 'yes' : 'no'; ?>" 
+			 data-show-lb-desc="<?php echo $show_lb_desc ? 'yes' : 'no'; ?>">
 			<div class="<?php echo esc_attr( $grid_class ); ?>">
 				<?php foreach ( $items as $index => $item ) : 
 					$image_url = $item['image']['url'];
@@ -457,8 +492,11 @@ class HexaGallery_Widget extends Widget_Base {
 		if ( ! enable_grayscale ) {
 			grid_class += ' no-grayscale';
 		}
+
+		var show_lb_title = settings.show_lightbox_title === 'yes' ? 'yes' : 'no';
+		var show_lb_desc = settings.show_lightbox_desc === 'yes' ? 'yes' : 'no';
 		#>
-		<div class="gallery-wrapper">
+		<div class="gallery-wrapper" data-show-lb-title="{{ show_lb_title }}" data-show-lb-desc="{{ show_lb_desc }}">
 			<div class="{{ grid_class }}">
 				<# _.each( settings.gallery_items, function( item, index ) { 
 					var image_url = item.image.url;
